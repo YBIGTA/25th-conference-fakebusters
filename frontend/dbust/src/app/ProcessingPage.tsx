@@ -40,7 +40,6 @@ const ProcessingPage: React.FC<ProcessingPageProps> = ({ originalVideoSrc, roiVi
         <div className="mx-auto max-w-2xl py-8 sm:py-12 lg:max-w-none lg:py-4">
           <h1 className="text-3xl font-bold mb-4">Processing Results</h1>
 
-          {/* Large Preview for Original Video */}
           <div className="mb-6">
             <video
               autoPlay
