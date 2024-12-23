@@ -26,6 +26,6 @@ async def upload_video(file: UploadFile = File(...)):
         for image_file in image_files:
             with open(os.path.join(frames_directory, image_file), "rb") as img:
                 yield img.read()
-            # os.remove(os.path.join(frames_directory, image_file))  # Clean up the image file after sending
+            os.remove(os.path.join(frames_directory, image_file))  # Clean up the image file after sending
 
     return StreamingResponse(iter_images(), media_type="multipart/x-mixed-replace; boundary=frame")
