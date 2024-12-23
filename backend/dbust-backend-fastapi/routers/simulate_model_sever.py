@@ -27,16 +27,13 @@ async def roi_model(filekey: str):
     response.headers['FileKey'] = filekey
     return response
 
-@router.get("/faceroi/{filekey}")
-async def face_roi_model(filekey: str):
-    '''
-    Simulate the Face ROI server
-    Input: filekey: str
-    Output: response: StreamingResponse which contains the video file and score in the header
-    '''
-
 @router.get("/mmnet/{filekey}")
 async def model(filekey: str):
+    '''
+    get response from mmnet model server
+    Input: filekey: str
+    Output: response: dict {message (text), status (text), reults (float)}
+    '''
 
     model_sever_url = "http://165.132.46.87:30310/process_video/"
     video_file_path = "lip_sample.mp4"
@@ -55,3 +52,11 @@ async def model(filekey: str):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    
+@router.get("/faceroi/{filekey}")
+async def face_roi_model(filekey: str):
+    '''
+    Simulate the Face ROI server
+    Input: filekey: str
+    Output: response: StreamingResponse which contains the video file and score in the header
+    '''
