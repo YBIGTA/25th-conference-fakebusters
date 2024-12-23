@@ -3,6 +3,8 @@ from fastapi.responses import StreamingResponse
 import random 
 import httpx
 import os, shutil
+import numpy as np
+import json
 
 router = APIRouter(
     prefix="/api/models",
@@ -25,11 +27,20 @@ async def roi_model(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
         
     video_file = open(file_path, "rb")
-    score = random.randint(0, 100)
+    
+    model_server_url = "http://165.132.46.83:32274/upload-video/"
+    
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.post(model_server_url, files={"file": video_file})
+            response.raise_for_status()
+            
+            score = response.headers["score"]
+            return StreamingResponse(content=response.iter_bytes(), headers={"score": score})
+        
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
 
-    response = StreamingResponse(video_file, media_type="video/mp4")
-    response.headers['Score'] = f"{score}"
-    return response
 
 @router.post("/mmnet")
 async def model(file: UploadFile = File(...)):
@@ -39,29 +50,34 @@ async def model(file: UploadFile = File(...)):
     Output: response: dict {message (text), status (text), reults (float)}
     '''
 
-    model_sever_url = "http://165.132.46.87:30310/process_video/"
+    model_sever_url = "http://165.132.46.87:32116/process_video/"
     
     file_path = os.path.join(VIDEO_DIR, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
         
     video_file = open(file_path, "rb")
-    score = random.randint(0, 100)
-    
-    response = StreamingResponse(video_file, media_type="video/mp4")
-    response.headers['Score'] = f"{score}"
-    return response
+    headers = {"Accept-Charset": "utf-8"}
 
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(model_sever_url, files={"file": video_file})
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(model_sever_url, files={"file": video_file}, headers=headers)
             response.raise_for_status()
-            return response.json()
+            
+            video_data = response.content
+            score = response.headers["X-Inference-Result"]
+            
+            def video_iterator(data):
+                yield data
+                
+            return StreamingResponse(video_iterator(video_data), headers={"score": score})
+        
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+  
     
 @router.post("/ppg")
 async def face_roi_model(file: UploadFile = File(...)):
@@ -78,13 +94,50 @@ async def face_roi_model(file: UploadFile = File(...)):
     
     model_sever_url = "http://165.132.46.85:32697/upload-video/"
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(model_sever_url, files={"file": video_file})
-            print(response)
             response.raise_for_status()
-            return response.json()
+            
+            return response
+        
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
+@router.post("/visual-ppg")
+async def get_visual(file: UploadFile = File(...)):
+    
+    model_sever_url = "http://165.132.46.83:30409/upload-video"
+    file_path = os.path.join(VIDEO_DIR, file.filename)
+    
+    if os.path.exists(file_path):
+        video_file = open(file_path, "rb")
+    else:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        video_file = open(file_path, "rb")
+        
+    try:
+        async with httpx.AsyncClient(timeout=180.0) as client:
+            response = await client.post(model_sever_url, files={"file": video_file})
+            response.raise_for_status()
+            return {"message": "Success", "status": "200", "results": response.headers}
+            
+            results_path = os.path.join("data/npz", file.filename + ".npz")
+            with open(results_path, "wb") as buffer:
+                buffer.write(response.content)
+            
+            results = np.load(results_path)
+            
+            total_frames = results["total_frames"]
+            masked_frames = results["masked_frames"]
+            transformed_frames = results["transformed_frames"]
+            r_means = results["R_means"]
+            l_means = results["L_means"]
+            m_means = results["M_means"]
+            
+            return {"masked_frames": masked_frames.tolist()}
+            
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
+    
