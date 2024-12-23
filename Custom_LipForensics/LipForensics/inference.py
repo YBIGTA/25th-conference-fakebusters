@@ -11,19 +11,19 @@ from torchvision.transforms import Compose, CenterCrop
 from tqdm import tqdm
 
 import sys
-sys.path.insert(0, "/root/Custom_LipForensics/LipForensics/data")
+sys.path.insert(0, "/root/25th-conference-fakebusters/Custom_LipForensics/LipForensics/data")
 from transforms import NormalizeVideo, ToTensorVideo
 from dataset_clips import SingleVideoClips
 from samplers import ConsecutiveClipSampler
-sys.path.insert(0, "/root/Custom_LipForensics/LipForensics/models")
+sys.path.insert(0, "/root/25th-conference-fakebusters/Custom_LipForensics/LipForensics/models")
 from spatiotemporal_net import get_model
-sys.path.insert(0, '/root/Custom_LipForensics/LipForensics')
+sys.path.insert(0, '/root/25th-conference-fakebusters/Custom_LipForensics/LipForensics')
 from lipforensics_utils import get_files_from_split
 
 
 def evaluate_lipforensics(
     cropped_mouths_path,
-    weights_forgery_path="/root/Custom_LipForensics/LipForensics/models/weights/lipforensics_ff.pth",
+    weights_forgery_path="/root/25th-conference-fakebusters/Custom_LipForensics/LipForensics/models/weights/lipforensics_ff.pth",
     frames_per_clip=25,
     batch_size=8,
     device="cuda:0",

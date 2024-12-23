@@ -39,7 +39,6 @@ def main():
     # Train SVR model
     model = SVRModel()
     save_interval = 100
-    breakpoint()
     for i in range(0, len(X_train), save_interval):
         batch_X = X_train[i:i+save_interval]
         batch_y = y_train[i:i+save_interval]

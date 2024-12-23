@@ -26,7 +26,7 @@ def get_model(weights_forgery_path=None, device="cuda:0"):
     device : str
         Device to put model on
     """
-    args_loaded = load_json("/root/Custom_LipForensics/LipForensics/models/configs/lrw_resnet18_mstcn.json")
+    args_loaded = load_json("/root/25th-conference-fakebusters/Custom_LipForensics/LipForensics/models/configs/lrw_resnet18_mstcn.json")
     relu_type = args_loaded["relu_type"]
     tcn_options = {
         "num_layers": args_loaded["tcn_num_layers"],
