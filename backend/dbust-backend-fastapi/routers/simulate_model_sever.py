@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException, File, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 import random 
 import httpx
 import os, shutil
 import numpy as np
 import json
+import subprocess
 
 router = APIRouter(
     prefix="/api/models",
@@ -70,10 +71,11 @@ async def roi_model(file: UploadFile = File(...)):
             response.raise_for_status()
             
             score = response.headers["score"]
-            return StreamingResponse(content=response.iter_bytes(), headers={"score": score})
+            return StreamingResponse(content=response.iter_bytes(), headers={"Score": score, "Access-Control-Expose-Headers": "Score"})
         
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
+
 
 @router.post("/mmnet")
 async def model(file: UploadFile = File(...)):
@@ -103,7 +105,7 @@ async def model(file: UploadFile = File(...)):
             def video_iterator(data):
                 yield data
                 
-            return StreamingResponse(video_iterator(video_data), headers={"score": score})
+            return StreamingResponse(video_iterator(video_data), headers={"Score": score, "Access-Control-Expose-Headers": "Score"})
         
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
@@ -131,7 +133,7 @@ async def face_roi_model(file: UploadFile = File(...)):
             response = await client.post(model_sever_url, files={"file": video_file})
             response.raise_for_status()
             
-            return response
+            return {"Score": response.json()["score"]}
         
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
@@ -141,35 +143,42 @@ async def face_roi_model(file: UploadFile = File(...)):
 async def get_visual(file: UploadFile = File(...)):
     
     model_sever_url = "http://165.132.46.83:30409/upload-video"
-    file_path = os.path.join(VIDEO_DIR, file.filename)
     
-    if os.path.exists(file_path):
-        video_file = open(file_path, "rb")
-    else:
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        video_file = open(file_path, "rb")
-        
+    PPG_DIR = "misc/ppg"
+    file_path = os.path.join(PPG_DIR, file.filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
     try:
-        async with httpx.AsyncClient(timeout=180.0) as client:
-            response = await client.post(model_sever_url, files={"file": video_file})
-            response.raise_for_status()
-            return {"message": "Success", "status": "200", "results": response.headers}
-            
-            results_path = os.path.join("data/npz", file.filename + ".npz")
-            with open(results_path, "wb") as buffer:
-                buffer.write(response.content)
-            
-            results = np.load(results_path)
-            
-            total_frames = results["total_frames"]
-            masked_frames = results["masked_frames"]
-            transformed_frames = results["transformed_frames"]
-            r_means = results["R_means"]
-            l_means = results["L_means"]
-            m_means = results["M_means"]
-            
-            return {"masked_frames": masked_frames.tolist()}
-            
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
+        subprocess.run(["python3", PPG_DIR +"/main.py", "-v", file_path, "-c", PPG_DIR+"/config.yaml"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+    except subprocess.CalledProcessError as e:
+        raise HTTPException(status_code=500, detail=f"Error in processing video {e}")
+    
+    ppg_graph_name = file.filename.split(".")[0] + "_graph.mp4"
+    ppg_mask_name = file.filename.split(".")[0] + "_mask.mp4"
+    ppg_transformed_name = file.filename.split(".")[0] + "_transformed.mp4"
+    
+    return JSONResponse(content={
+        "videos": {
+            "ppg_graph": ppg_graph_name,
+            "ppg_mask": ppg_mask_name,
+            "ppg_transformed": ppg_transformed_name
+        }
+    })
+    
+    
+@router.get("/video/{file_name}")
+async def get_video(file_name: str):
+    '''
+    Get the video file
+    Input: file_path: str
+    Output: response: StreamingResponse which contains the video file
+    '''
+    file_path = os.path.join("misc/ppg/output", file_name)
+    video_file = open(file_path, "rb")
+    
+    def video_iterator(file):
+        yield from file
+    
+    return StreamingResponse(video_iterator(video_file), media_type="video/mp4")

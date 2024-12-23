@@ -1,7 +1,6 @@
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 import time
-from s3_service import upload_file_to_s3
 from csv_service import log_upload_metrics
 
 router = APIRouter(

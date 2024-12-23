@@ -1,0 +1,3 @@
+model_path : "misc/ppg/utils/face_landmarker.task"
+fps_standard: 30
+seg_time_interval: 3
