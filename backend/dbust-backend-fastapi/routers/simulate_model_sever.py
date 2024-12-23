@@ -63,10 +63,10 @@ async def model(file: UploadFile = File(...)):
         print(e)
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
     
-@router.post("/faceroi")
+@router.post("/ppg")
 async def face_roi_model(file: UploadFile = File(...)):
     '''
-    Simulate the Face ROI server
+    Simulate the ppg server
     Input: filekey: str
     Output: response: StreamingResponse which contains the video file and score in the header
     '''
@@ -75,6 +75,16 @@ async def face_roi_model(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
         
     video_file = open(file_path, "rb")
-    score = random.randint(0, 100)
     
-    response = StreamingResponse(video_file, media_type="video/mp4")
+    model_sever_url = "http://165.132.46.85:32697/upload-video/"
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(model_sever_url, files={"file": video_file})
+            print(response)
+            response.raise_for_status()
+            return response.json()
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"Error from model server: {e.response.text}")
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
