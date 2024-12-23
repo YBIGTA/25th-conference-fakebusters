@@ -44,3 +44,6 @@ frontend/dbust/node_modules
 
 # ignore the public folder in the dbust folder
 public/002
+
+# ignore all data folders
+data/
