@@ -4,7 +4,7 @@ import { ProgressCircleRing, ProgressCircleRoot } from "@/components/ui/progress
 import { HStack } from "@chakra-ui/react";
 
 interface FileUploadProps {
-    onFileUpload: (file: File) => void;
+    onFileUpload: (file: File, images?: string[]) => void;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
@@ -70,30 +70,34 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
 
             try {
                 // File Upload
-                // const formData = new FormData();
-                // formData.append('file', selectedFile);
+                // Set this flag to true to use S3 upload, false to use split-frames upload
+                const useS3Upload = false; 
 
-                // const response = await fetch('http://localhost:8000/api/files/upload', {
-                //     method: 'POST',
-                //     body: formData,
-                // });
+                if (useS3Upload) {
+                    await uploadToS3(selectedFile);
+                    onFileUpload(selectedFile);
+                } else {
+                    const images = await uploadToSplitFrames(selectedFile);
+                    onFileUpload(selectedFile, images);
+                }
 
+                
                 // const endTime = Date.now();
                 // const duration = endTime - startTime;
                 // console.log(`Upload completed in ${duration} milliseconds`);
-
-                // if (!response.ok) {
-                //     throw new Error('Upload failed');
-                // }
-
+                
+                // if (!s3response.ok) {
+                //         throw new Error('Upload failed');
+                //     }
+                    
                 // const data = await response.json();
                 // console.log('File uploaded successfully:', data);
 
+
                 // Simulate upload
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-                console.log('Simulated upload completed in 1000 milliseconds');
+                // await new Promise((resolve) => setTimeout(resolve, 1000));
+                // console.log('Simulated upload completed in 1000 milliseconds');
                 
-                onFileUpload(selectedFile);
 
                 setPreview(null);
                 setIsPreviewShown(false);
@@ -105,6 +109,52 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
             }
         }
     }, [selectedFile, onFileUpload]);
+
+
+    const uploadToS3 = async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+    
+        const response = await fetch('http://localhost:8000/api/files/upload', {
+            method: 'POST',
+            body: formData,
+        });
+    
+        if (!response.ok) {
+            throw new Error('S3 upload failed');
+        }
+    
+        const data = await response.json();
+        console.log('File uploaded to S3 successfully:', data);
+    };
+    
+
+    const uploadToSplitFrames = async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch('http://localhost:8000/api/split-frames/upload-video', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Split-frames upload failed');
+        }
+
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let images: string[] = [];
+
+        while (true) {
+            const { done, value } = await reader?.read()!;
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            images.push(chunk);
+        }
+
+        return images;
+    };
 
     const handleClear = useCallback(() => {
         setPreview(null);
