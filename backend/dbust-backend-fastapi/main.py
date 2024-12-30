@@ -4,7 +4,7 @@ from routers import file_upload, simulate_model_sever
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
+    "*"
 ]
 
 app.add_middleware(

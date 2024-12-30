@@ -169,7 +169,7 @@ async def get_video(file_name: str):
 
 @router.post("/fakecatcher-cnn")
 async def get_result(file: UploadFile = File(...)):
-    model_server_url = "https://e027-165-132-46-85.ngrok-free.app/upload-video/"
+    model_server_url = "https://534e-165-132-46-85.ngrok-free.app/upload-video/"
     file_path = os.path.join(VIDEO_DIR, file.filename)
     
     with open(file_path, "wb") as buffer:
@@ -178,7 +178,7 @@ async def get_result(file: UploadFile = File(...)):
     video_file = open(file_path, "rb")
 
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(model_server_url, files={"file": video_file})
             response.raise_for_status()
             
@@ -196,7 +196,7 @@ async def get_result(file: UploadFile = File(...)):
 
 @router.post("/fakecatcher-feature")
 async def get_result(file: UploadFile = File(...)):
-    model_server_url = "https://cbd9-165-132-46-92.ngrok-free.app/upload-video"
+    model_server_url = "https://be4e-165-132-46-92.ngrok-free.app/upload-video"
     file_path = os.path.join(VIDEO_DIR, file.filename)
     
     with open(file_path, "wb") as buffer:
@@ -205,7 +205,7 @@ async def get_result(file: UploadFile = File(...)):
     video_file = open(file_path, "rb")
 
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(model_server_url, files={"file": video_file})
             response.raise_for_status()
             
