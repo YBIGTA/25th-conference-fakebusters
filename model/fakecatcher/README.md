@@ -26,7 +26,7 @@ python preprocess_map.py -c model/fakecatcher/utils/config.yaml -l model/fakecat
 
 #### 1-2. Train cnn model
 ```bash
-python cnn/train.py -c model/fakecatcher/utils/config.yaml -l model/fakecatcher/data/ppg_cnn.log -i model/fakecatcher/data/ppg_maps.json -o model/fakecatcher/model_state.pt
+python cnn/train.py -c model/fakecatcher/utils/config.yaml -l model/fakecatcher/data/ppg_cnn.log -i model/fakecatcher/data/ppg_maps.json -o model/fakecatcher/model_state.pth
 ```
 
 ### 2. Inference step
