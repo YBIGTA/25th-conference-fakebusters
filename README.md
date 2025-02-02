@@ -1,3 +1,9 @@
+# Fakebusters
+
+<div align="center">
+<h3>24-2 YBIGTA 컨퍼런스</h3>
+<em>딥페이크 탐지 모델</em>
+</div>
 
 ## 📌 프로젝트 개요
 
@@ -38,8 +44,8 @@ FakeBusters는 다음과 같은 4개의 탐지 모델을 포함합니다:
 
 ### 1️⃣ 프로젝트 클론 및 의존성 설치
 ```bash
-git clone https://github.com/YOUR-ORG/FakeBusters.git
-cd FakeBusters
+git clone https://github.com/YBIGTA/25th-conference-fakebusters.git
+cd 25th-conference-fakebusters
 ```
 
 ### 2️⃣ 전체 서비스 실행
