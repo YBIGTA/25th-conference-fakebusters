@@ -1,15 +1,15 @@
 # ROI Process
-landmarker_path : \25th-conference-fakebusters\model\fakecatcher\misc\face_landmarker.task
+landmarker_path : misc/face_landmarker.task
 
 # Load Data
 inference_video_path : 
 meta_data_csv_path : 
 
 # Constants
-fps_standard: 
-seg_time_interval:
+fps_standard: 30
+seg_time_interval: 3
 
 # Model
-model_path: model/fakecatcher/model_state.pt
-model_type: # baseCNN, ResNet34, EfficientNetB3, SVR, Pycaret
+model_path: model_state.pth
+model_type: # SVR, Pycaret
 output_path: 
