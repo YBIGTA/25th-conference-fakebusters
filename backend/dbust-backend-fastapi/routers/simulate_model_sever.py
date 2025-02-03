@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, File, UploadFile
 from fastapi.responses import StreamingResponse, JSONResponse
+from dbust_backend_fastapi.config import lipforensic_server_url, mmnet_server_url, fakecatcher_cnn_server_url, fakecatcher_feature_server_url
 import random 
 import httpx
 import os, shutil
@@ -63,7 +64,8 @@ async def roi_model(file: UploadFile = File(...)):
         
     video_file = open(file_path, "rb")
   
-    model_server_url = "https://358e-165-132-46-83.ngrok-free.app/upload-video/"
+    model_server_url = "https://358e-165-132-46-83.ngrok-free.app/upload-video/" #can be hardcoded
+    model_server_url = lipforensic_server_url
     
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
@@ -89,8 +91,8 @@ async def model(file: UploadFile = File(...)):
     Output: response: dict {message (text), status (text), reults (float)}
     '''
 
-    model_sever_url = "http://165.132.46.87:32116/process_video/"
     model_server_url = "https://9d4f-165-132-46-93.ngrok-free.app/process_video/"
+    model_server_url = mmnet_server_url
 
     file_path = os.path.join(VIDEO_DIR, file.filename)
     with open(file_path, "wb") as buffer:
@@ -170,6 +172,7 @@ async def get_video(file_name: str):
 @router.post("/fakecatcher-cnn")
 async def get_result(file: UploadFile = File(...)):
     model_server_url = "https://534e-165-132-46-85.ngrok-free.app/upload-video/"
+    model_server_url = fakecatcher_cnn_server_url
     file_path = os.path.join(VIDEO_DIR, file.filename)
     
     with open(file_path, "wb") as buffer:
@@ -197,6 +200,8 @@ async def get_result(file: UploadFile = File(...)):
 @router.post("/fakecatcher-feature")
 async def get_result(file: UploadFile = File(...)):
     model_server_url = "https://be4e-165-132-46-92.ngrok-free.app/upload-video"
+    model_server_url = fakecatcher_feature_server_url
+    
     file_path = os.path.join(VIDEO_DIR, file.filename)
     
     with open(file_path, "wb") as buffer:
