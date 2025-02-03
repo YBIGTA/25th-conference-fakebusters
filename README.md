@@ -20,7 +20,6 @@
 ### 🔧 백엔드 (Backend)
 - **FastAPI** 기반 REST API 서버.
 - 4개의 모델 서버와 연동하여 탐지 결과를 관리.
-- **Streaming Response**를 활용한 실시간 데이터 처리.
 
 ### 🖥️ 프론트엔드 (Frontend)
 - **React.js + Next.js** 기반 웹 애플리케이션.
