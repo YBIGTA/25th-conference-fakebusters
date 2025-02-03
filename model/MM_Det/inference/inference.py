@@ -78,13 +78,13 @@ from builder import get_model
 def inference(_video_dir, _mother_dir, _image_dir, _mm_representation_path, _reconstruction_path, _config):
     prefix = _video_dir.split('/')[-1].split('.')[0]
     _image_dir = f'{_reconstruction_path}/{prefix}'
-    # inference_frame_maker(
-    #     mother_dir=_mother_dir,
-    #     video_dir=_video_dir,
-    # )
-    # LMM_inference(
-    #     image_dir = _image_dir,
-    #     config = _config)
+    inference_frame_maker(
+        mother_dir=_mother_dir,
+        video_dir=_video_dir,
+    )
+    LMM_inference(
+        image_dir = _image_dir,
+        config = _config)
 
 
     # args = TestOption().parse()
