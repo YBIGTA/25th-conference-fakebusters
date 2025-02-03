@@ -41,9 +41,10 @@ git clone https://github.com/YBIGTA/25th-conference-fakebusters.git
 cd 25th-conference-fakebusters
 ```
 
-### 2️⃣ 전체 서비스 실행
+### 2️⃣ 각 서버 환경 설정
 ```bash
-bash setup.sh  # 모든 서버 및 환경 자동 설정
+. ./setup.sh -m 'model명' -c config.yaml #각 모델 별 환경설정
+. ./setup.sh                            #전체 환경 설정
 ```
 
 ### 3️⃣ 개별 서버 실행
