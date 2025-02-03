@@ -103,4 +103,5 @@ dependencies:
       - urllib3==2.3.0
       - uvicorn==0.34.0
       - wavedrom==2.0.3.post3
+      - imageio[ffmpeg]
 prefix: /root/miniconda3/envs/mmdet
