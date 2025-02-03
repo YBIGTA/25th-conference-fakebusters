@@ -51,8 +51,7 @@ def construct_cached_mm_representations(args):
                     cached_mm_representations_index[dname][label][prefix] = [int(index)]
                 else:
                     cached_mm_representations_index[dname][label][prefix].append(int(index))
-    logging.info(f'cached_representations : {cached_mm_representations}')
-    logging.info(f'index : {cached_mm_representations_index}')
+
     return cached_mm_representations, cached_mm_representations_index
 
 
