@@ -1,5 +1,5 @@
 lipforensics-path: /home/ubuntu/25th-conference-fakebusters/model/Custom_LipForensics/lipforensics_environment.yaml
 mmdet-path: /home/ubuntu/25th-conference-fakebusters/model/MM_Det/mmdet_environment.yaml
 fakecatcher-path:  /home/ubuntu/25th-conference-fakebusters/model/fakecatcher/fakecatcher_environment.yaml
-backend-path: /home/ubuntu/backend/dbust=backend-fastapi/backend=environment.yaml
+backend-path: /home/ubuntu/backend/dbust=backend-fastapi/backend_environment.yaml
 frontend-path: /home/ubuntu/25th-conference-fakebusters/frontend/
