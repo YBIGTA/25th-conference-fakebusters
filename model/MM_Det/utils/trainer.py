@@ -196,9 +196,7 @@ class Trainer:
         preds = torch.tensor(preds)
 
         softmax_preds = F.softmax(preds, dim=1)
-        print(f"Softmax predictions: {softmax_preds}")
 
-        print(f"{frame_gts}")
 
         loss = self.criterion(preds, frame_gts)
         video_inference['loss'] = loss
