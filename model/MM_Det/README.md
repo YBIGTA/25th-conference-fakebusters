@@ -23,3 +23,5 @@ if inference went succesfully, you can see
 
 
 
+### 3. Minimum GPU Memory
+GPU must have > 48Gb memory or 24GB * 2
