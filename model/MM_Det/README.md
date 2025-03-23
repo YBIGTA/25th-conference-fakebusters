@@ -25,3 +25,10 @@ if inference went succesfully, you can see
 
 ### 3. Minimum GPU Memory
 GPU must have > 48Gb memory or 24GB * 2
+
+### 4. If you want to make inference api
+```bash
+cd /25th-conference-fakebusters/model/MM_Det
+python -m inference.main_fastapi 
+```
+then it will works on port 8000
