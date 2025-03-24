@@ -40,13 +40,13 @@ async def upload_video(file: UploadFile = File(...)):
         with file_path.open("wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"File save failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"File save failed: {str(e)}")
     
     # Analyze the video file
     try:
         accuracy = predict(str(file_path), args.config_path)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Prediction failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
     
     return {"message": "Video uploaded successfully!", "file_name": file.filename, "file_path": str(file_path), "score": str(accuracy)}
 
