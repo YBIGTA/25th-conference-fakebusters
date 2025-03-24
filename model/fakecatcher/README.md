@@ -72,26 +72,42 @@ Now your model is running on the uvicorn!
         - `file`: The `.mp4` video file to be uploaded.
 
     - request example
-    ```bash
-    curl -X POST https://{your server url}/upload-video/ \
-    -H "Content-Type: multipart/form-data" \
-    -F "file=@{file path}"
-    ```
+        ```bash
+        curl -X POST https://{your server url}/upload-video/ \
+        -H "Content-Type: multipart/form-data" \
+        -F "file=@{file path}"
+        ```
 - Response
-    - foramt: application/json
+    - format: application/json
     - Success response example:
+        ```json
+        {
+        "message": "Video uploaded successfully!",
+        "file_name": "KakaoTalk_20241219_172238270.mp4",
+        "file_path": "uploaded_videos/KakaoTalk_20241219_172238270.mp4",
+        "score": "0.8333333333333334"
+        }
+        ```
+        - `message`: Upload result message
+        - `file_name`: video file name
+        - `file_path`: saved video path in server
+        - `score`:  real video score(The `score` ranges from 0 to 1, where values closer to **1** indicate a real video, and values closer to **0** indicate a fake video.)
+    
 
-    ```json
-    {
-    "message": "Video uploaded successfully!",
-    "file_name": "KakaoTalk_20241219_172238270.mp4",
-    "file_path": "uploaded_videos/KakaoTalk_20241219_172238270.mp4",
-    "score": "0.8333333333333334"
-    }```
-| 필드명     | 설명                                        |
-|------------|---------------------------------------------|
-| message    | Upload result message                        |
-| file_name  | video file name                 |
-| file_path  | saved path in server                          |
-| score      | real video score(The `score` ranges from 0 to 1, where values closer to **1** indicate a real video, and values closer to **0** indicate a fake video.
- |
+    - Fail response example:
+        - Returned when the server fails to save the uploaded file.
+        - status code: 500
+        - Returned when an error occurs during saving video or inference.
+      ```json
+        {
+          "detail": "File save failed: [error message]"
+        }
+      ```
+      
+      ```json
+        {
+          "detail": "Prediction failed: [error message]"
+        }
+      ```
+
+        
