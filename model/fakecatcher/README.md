@@ -97,17 +97,26 @@ Now your model is running on the uvicorn!
     - Fail response example:
         - Returned when the server fails to save the uploaded file.
         - status code: 500
-        - Returned when an error occurs during saving video or inference.
-      ```json
-        {
-          "detail": "File save failed: [error message]"
-        }
-      ```
-      
-      ```json
-        {
-          "detail": "Prediction failed: [error message]"
-        }
-      ```
+            - Returned when an error occurs during saving video or inference.
+          ```json
+            {
+              "detail": "File save failed: [error message]"
+            }
+          ```
+          
+          ```json
+            {
+              "detail": "Prediction failed: [error message]"
+            }
+          ```
+      - status code: 400
+          - Returned when the uploaded file is not a supported video format.
+          ```json
+            {
+              "detail": "Unsupported file format. Please upload a valid video file."
+            }
+          ```
+
+
 
         
