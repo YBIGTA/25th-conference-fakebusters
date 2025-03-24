@@ -54,6 +54,7 @@ elif [ "$mode" == "mmdet" ]; then
 
 elif [ "$mode" == "fakecatcher" ]; then
     FAKE_PATH=$(grep 'fakecatcher-path:' $config | cut -d ':' -f 2- | tr -d ' ')
+    sudo apt-get update
     sudo apt-get install -y libgl1-mesa-glx 
     sudo apt-get install -y libglx-mesa0 
     sudo apt-get install -y libgl1
