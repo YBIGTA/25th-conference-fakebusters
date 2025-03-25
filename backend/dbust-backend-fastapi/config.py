@@ -9,7 +9,7 @@ BUCKET_NAME = "fakebuster"
 REGION = "ap-northeast-2"
 CSV_FILE_PATH = "upload_metrics.csv"
 
-lipforensics_server_url = "localhost:8000/upload-video/"
+lipforensic_server_url = "localhost:8000/upload-video/"
 mmnet_server_url = "localhost:8001/process_video/"
 fakecatcher_cnn_server_url = "localhost:8002/upload-video/"
 fakecatcher_feature_server_url = "localhost:8003/upload-video/"
