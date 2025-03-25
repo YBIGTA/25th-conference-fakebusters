@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, File, UploadFile
 from fastapi.responses import StreamingResponse, JSONResponse
-from dbust_backend_fastapi.config import lipforensic_server_url, mmnet_server_url, fakecatcher_cnn_server_url, fakecatcher_feature_server_url
+from config import lipforensic_server_url, mmnet_server_url, fakecatcher_cnn_server_url, fakecatcher_feature_server_url
 import random 
 import httpx
 import os, shutil
