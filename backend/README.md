@@ -25,8 +25,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000     #호스트와 포트 지정해 �
 ```
 
 4. 참고: visual-ppg 실행시
-   
-해당 api는 ppg 방식의 동작 과정을 보여주기 위해 backend 서버에서 따로 동영상을 처리하므로, 이를 호출할 시 backend 서버의 추가 환경 세팅이 필요함.
+- 해당 api는 ppg 방식의 동작 과정을 보여주기 위해 backend 서버에서 따로 동영상을 처리하므로, 이를 호출할 시 backend 서버의 추가 환경 세팅이 필요함.
 ```bash
 sudo yum install -y mesa-libGL mesa-libGL-devel
 conda install -c conda-forge ffmpeg
