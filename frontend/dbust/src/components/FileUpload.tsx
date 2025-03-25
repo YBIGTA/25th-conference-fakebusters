@@ -12,7 +12,6 @@ interface FileUploadProps {
     lipSetVideoUrl: (url: string) => void;
     mmnetSetScore: (score: string) => void;
     mmnetSetVideoUrl: (url: string) => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setPpgVideos: (ppgVideos: any) => void;
 }
 
@@ -76,7 +75,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, lipSetScore, lipS
             const lipFormData = new FormData();
             lipFormData.append('file', file);
 
-            const lipResponse = await fetch(`${config.apiBaseUrl}/api/models/lipforensic`, {
+            const lipResponse = await fetch(`${(await config).apiBaseUrl}/api/models/lipforensic`, {
                 method: 'POST',
                 body: lipFormData,
             });
@@ -101,7 +100,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, lipSetScore, lipS
             const mmnetFormData = new FormData();
             mmnetFormData.append('file', file);
 
-            const mmnetResponse = await fetch(`${config.apiBaseUrl}/api/models/mmnet`, {
+            const mmnetResponse = await fetch(`${(await config).apiBaseUrl}/api/models/mmnet`, {
                 method: 'POST',
                 body: mmnetFormData,
             });
@@ -121,12 +120,14 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, lipSetScore, lipS
         }
     }, [mmnetSetScore, mmnetSetVideoUrl]);
 
+    
+
     const uploadVisualPPG = useCallback(async (file: File) => {
         try {
             const ppgFormData = new FormData();
             ppgFormData.append('file', file);
 
-            const ppgResponse = await fetch(`${config.apiBaseUrl}/api/models/visual-ppg`, {
+            const ppgResponse = await fetch(`${(await config).apiBaseUrl}/api/models/visual-ppg`, {
                 method: 'POST',
                 body: ppgFormData,
             });
@@ -150,10 +151,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, lipSetScore, lipS
         try {
             const header = new Headers();
             header.append('ngrok-skip-browser-warning', 'true');
-            const baseUrl = 'https://69b3-13-209-124-7.ngrok-free.app/api/models/video/';
-            const ppgGraphResponse = await fetch(`${baseUrl}${videoNames.ppg_graph}` , { headers: header });
-            const ppgMaskResponse = await fetch(`${baseUrl}${videoNames.ppg_mask}` , { headers: header });
-            const ppgTransformedResponse = await fetch(`${baseUrl}${videoNames.ppg_transformed}` , { headers: header });
+            const graphBaseUrl = (await config).apiBaseUrl;
+            const ppgGraphResponse = await fetch(`${graphBaseUrl}/api/models/video/${videoNames.ppg_graph}` , { headers: header });
+            const ppgMaskResponse = await fetch(`${graphBaseUrl}/api/models/video/${videoNames.ppg_mask}` , { headers: header });
+            const ppgTransformedResponse = await fetch(`${graphBaseUrl}/api/models/video/${videoNames.ppg_transformed}` , { headers: header });
 
             if (!ppgGraphResponse.ok || !ppgMaskResponse.ok || !ppgTransformedResponse.ok) {
                 throw new Error('Failed to fetch PPG videos');
@@ -163,7 +164,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, lipSetScore, lipS
             const ppgMaskBlob = await ppgMaskResponse.blob();
             const ppgTransformedBlob = await ppgTransformedResponse.blob();
 
-            console.log(`${baseUrl}${videoNames.ppg_graph}`)
+            console.log(`${graphBaseUrl}${videoNames.ppg_graph}`)
             console.log(ppgMaskBlob)
 
             const ppgGraphUrl = URL.createObjectURL(ppgGraphBlob);
