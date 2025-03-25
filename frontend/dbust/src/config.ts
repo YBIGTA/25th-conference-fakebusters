@@ -1,26 +1,28 @@
-import yaml from 'js-yaml';
-import fs from 'fs';
-import path from 'path';
-
 interface Config {
     apiBaseUrl: string;
 }
 
 let config: Config;
 
-export const loadConfig = () => {
+export const loadConfig = async () => {
+    if (typeof window === 'undefined') {
+        throw new Error('loadConfig should only be called on the client side');
+    }
+
     try {
-        const filePath = path.resolve(__dirname, '../config.yaml');
-        const fileContents = fs.readFileSync(filePath, 'utf8');
-        config = yaml.load(fileContents) as Config;
+        const response = await fetch('/api/config');
+        if (!response.ok) {
+            throw new Error('Failed to fetch config');
+        }
+        config = await response.json();
     } catch (e) {
         console.error(e);
     }
 };
 
-export const getConfig = (): Config => {
+export const getConfig = async (): Promise<Config> => {
     if (!config) {
-        loadConfig();
+        await loadConfig();
     }
     return config;
 };
